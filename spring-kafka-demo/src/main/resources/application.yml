@@ -1,0 +1,72 @@
+server:
+  port: 10000
+
+spring:
+  kafka:
+    bootstrap-servers: 192.168.2.147:9092
+    consumer:
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      group-id: single-group
+    producer:
+      acks: 1
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+  profiles:
+    active: single
+
+
+---
+
+server:
+  port: 10000
+
+spring:
+  kafka:
+    bootstrap-servers: 192.168.2.147:9092
+    consumer:
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      group-id: list-group
+      max-poll-records: 50
+      fetch-min-size: 20
+    producer:
+      acks: 1
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      batch-size: 50
+
+    listener:
+      type: batch
+
+  profiles:
+    active: list
+
+---
+server:
+  port: 10000
+
+spring:
+  kafka:
+    bootstrap-servers: 192.168.2.147:9092
+    consumer:
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      group-id: concurrent-group
+      max-poll-records: 50
+    producer:
+      acks: 1
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      batch-size: 50
+
+    listener:
+      type: batch
+      ack-mode: batch
+      concurrency: 3
+
+  profiles:
+    active: concurrent
